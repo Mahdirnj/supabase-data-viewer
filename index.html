@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UUT Data Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Persian Datepicker CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Check if the user is authenticated
+        window.addEventListener('DOMContentLoaded', function() {
+            const authToken = localStorage.getItem('supabase.auth.token');
+            if (!authToken) {
+                // Not authenticated, redirect to login page
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <h1>Supabase Data Viewer</h1>
+            <div class="dark-mode-toggle">
+                <span>Dark Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <button id="logout-btn" class="logout-btn" title="Logout"><i class="fas fa-power-off"></i></button>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="professors">
+                <i class="fas fa-user-tie"></i>
+                <span>Professors</span>
+            </button>
+            <button class="tab-btn" data-tab="itcourses">
+                <i class="fas fa-graduation-cap"></i>
+                <span>IT Courses</span>
+            </button>
+            <button class="tab-btn" data-tab="file_link">
+                <i class="fas fa-file-alt"></i>
+                <span>File Link</span>
+            </button>
+            <button class="tab-btn" data-tab="events">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </button>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Search...">
+                <button id="clear-search" class="clear-search-btn" title="Clear search"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        
+        <!-- Professors Tab Content -->
+        <div class="tab-content active" id="professors-content">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Professors</h2>
+                    <button id="add-professor-btn" class="add-btn"><i class="fas fa-plus"></i> Add Professor</button>
+                </div>
+                <table id="professors-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="name">Name <i class="fas fa-sort"></i></th>
+                            <th data-sort="department">Department <i class="fas fa-sort"></i></th>
+                            <th data-sort="email">Email <i class="fas fa-sort"></i></th>
+                            <th data-sort="phone">Phone <i class="fas fa-sort"></i></th>
+                            <th data-sort="office">Office <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+                <div id="professors-loading" class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                </div>
+                <div id="professors-error" class="error-message"></div>
+            </div>
+        </div>
+        
+        <!-- IT Courses Tab Content -->
+        <div class="tab-content" id="itcourses-content">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>IT Courses</h2>
+                    <button id="add-itcourse-btn" class="add-btn"><i class="fas fa-plus"></i> Add Course</button>
+                </div>
+                <table id="itcourses-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="code">Code <i class="fas fa-sort"></i></th>
+                            <th data-sort="name">Name <i class="fas fa-sort"></i></th>
+                            <th data-sort="instructor">Instructor <i class="fas fa-sort"></i></th>
+                            <th data-sort="credits">Credits <i class="fas fa-sort"></i></th>
+                            <th data-sort="schedule">Schedule <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+                <div id="itcourses-loading" class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                </div>
+                <div id="itcourses-error" class="error-message"></div>
+            </div>
+        </div>
+        
+        <!-- File Link Tab Content -->
+        <div class="tab-content" id="file_link-content">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>File Links</h2>
+                    <button id="add-file_link-btn" class="add-btn"><i class="fas fa-plus"></i> Add File Link</button>
+                </div>
+                <table id="file_link-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="title">Title <i class="fas fa-sort"></i></th>
+                            <th data-sort="description">Description <i class="fas fa-sort"></i></th>
+                            <th data-sort="url">URL <i class="fas fa-sort"></i></th>
+                            <th data-sort="category">Category <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+                <div id="file_link-loading" class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                </div>
+                <div id="file_link-error" class="error-message"></div>
+            </div>
+        </div>
+        
+        <!-- Events Tab Content -->
+        <div class="tab-content" id="events-content">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Events</h2>
+                    <button id="add-event-btn" class="add-btn"><i class="fas fa-plus"></i> Add Event</button>
+                </div>
+                <table id="events-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="title">Title <i class="fas fa-sort"></i></th>
+                            <th data-sort="date">Date <i class="fas fa-sort"></i></th>
+                            <th data-sort="location">Location <i class="fas fa-sort"></i></th>
+                            <th data-sort="description">Description <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+                <div id="events-loading" class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                </div>
+                <div id="events-error" class="error-message"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Templates -->
+    <div id="modal-container" class="modal-container">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Add/Edit Record</h3>
+                <button id="close-modal" class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Form will be dynamically inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button id="modal-cancel" class="btn btn-secondary">Cancel</button>
+                <button id="modal-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal-container">
+        <div class="modal delete-modal">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+                <button id="close-delete-modal" class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this record? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="delete-cancel" class="btn btn-secondary">Cancel</button>
+                <button id="delete-confirm" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- jQuery for Persian Datepicker -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Persian Datepicker JS -->
+    <script src="https://unpkg.com/persian-date@1.1.0/dist/persian-date.min.js"></script>
+    <script src="https://unpkg.com/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+    <!-- Main Script -->
+    <script src="script.js"></script>
+</body>
+</html>
